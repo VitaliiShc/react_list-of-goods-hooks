@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import 'bulma/css/bulma.css';
 import './App.scss';
 import cn from 'classnames';
-
-import { GoodList } from './components/GoodList';
+import { GoodList } from './components/GoodList/';
 
 export const goodsFromServer = [
   'Dumplings',
@@ -21,12 +20,7 @@ export const goodsFromServer = [
 const SORT_BY_LENGTH = 'length';
 const SORT_BY_ABC = 'abc';
 
-enum SortType {
-  length = SORT_BY_LENGTH,
-  abc = SORT_BY_ABC,
-}
-
-function createInternalArrayOfObjectsWithId(arr: string[]) {
+function createInternalArrayOfObjectsWithId(arr) {
   return arr.map((item, idx) => {
     return {
       name: item,
@@ -43,9 +37,9 @@ export const App: React.FC = () => {
 
   let sortedGoods = goodsListWithId.toSorted((good1, good2) => {
     switch (sortValue) {
-      case SortType.length:
+      case SORT_BY_LENGTH:
         return good1.name.length - good2.name.length;
-      case SortType.abc:
+      case SORT_BY_ABC:
         return good1.name.localeCompare(good2.name);
       default:
         return 0;
@@ -62,9 +56,9 @@ export const App: React.FC = () => {
         <button
           type="button"
           className={cn('button', 'is-info', {
-            'is-light': sortValue !== SortType.abc,
+            'is-light': sortValue !== SORT_BY_ABC,
           })}
-          onClick={() => setSortValue(SortType.abc)}
+          onClick={() => setSortValue(SORT_BY_ABC)}
         >
           Sort alphabetically
         </button>
@@ -72,9 +66,9 @@ export const App: React.FC = () => {
         <button
           type="button"
           className={cn('button', 'is-success', {
-            'is-light': sortValue !== SortType.length,
+            'is-light': sortValue !== SORT_BY_LENGTH,
           })}
-          onClick={() => setSortValue(SortType.length)}
+          onClick={() => setSortValue(SORT_BY_LENGTH)}
         >
           Sort by length
         </button>
