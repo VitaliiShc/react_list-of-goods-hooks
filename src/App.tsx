@@ -18,34 +18,36 @@ export const goodsFromServer = [
   'Garlic',
 ];
 
-const SORT_BY_LENGTH = 'length';
-const SORT_BY_ABC = 'abc';
-
 enum SortType {
-  length = SORT_BY_LENGTH,
-  abc = SORT_BY_ABC,
+  Default = '',
+  Length = 'length',
+  Alphabetical = 'Alphabetical',
 }
 
-function createInternalArrayOfObjectsWithId(arr: string[]) {
-  return arr.map((item, idx) => {
-    return {
-      name: item,
-      internalId: idx,
-    };
-  });
+interface Good {
+  name: string;
+  internalId: number;
+}
+
+function createInternalArrayOfObjectsWithId(arr: string[]): Good[] {
+  return arr.map((item, idx) => ({
+    name: item,
+    internalId: idx,
+  }));
 }
 
 const goodsListWithId = createInternalArrayOfObjectsWithId(goodsFromServer);
 
-export const App: React.FC = () => {
-  const [sortValue, setSortValue] = useState('');
-  const [isReversed, setIsReversed] = useState(false);
-
-  let sortedGoods = goodsListWithId.toSorted((good1, good2) => {
+function sortingAndReversing(
+  arr: Good[],
+  sortValue: string,
+  isReversed: boolean,
+): Good[] {
+  let sorted = arr.toSorted((good1, good2) => {
     switch (sortValue) {
-      case SortType.length:
+      case SortType.Length:
         return good1.name.length - good2.name.length;
-      case SortType.abc:
+      case SortType.Alphabetical:
         return good1.name.localeCompare(good2.name);
       default:
         return 0;
@@ -53,8 +55,28 @@ export const App: React.FC = () => {
   });
 
   if (isReversed) {
-    sortedGoods = sortedGoods.toReversed();
+    sorted = sorted.toReversed();
   }
+
+  return sorted;
+}
+
+export const App: React.FC = () => {
+  const [sortValue, setSortValue] = useState(SortType.Default);
+  const [isReversed, setIsReversed] = useState(false);
+
+  const isSortedOrReserved = sortValue || isReversed;
+
+  const handleReset = () => {
+    setSortValue(SortType.Default);
+    setIsReversed(false);
+  };
+
+  const sortedGoods = sortingAndReversing(
+    goodsListWithId,
+    sortValue,
+    isReversed,
+  );
 
   return (
     <div className="section content">
@@ -62,9 +84,9 @@ export const App: React.FC = () => {
         <button
           type="button"
           className={cn('button', 'is-info', {
-            'is-light': sortValue !== SortType.abc,
+            'is-light': sortValue !== SortType.Alphabetical,
           })}
-          onClick={() => setSortValue(SortType.abc)}
+          onClick={() => setSortValue(SortType.Alphabetical)}
         >
           Sort alphabetically
         </button>
@@ -72,9 +94,9 @@ export const App: React.FC = () => {
         <button
           type="button"
           className={cn('button', 'is-success', {
-            'is-light': sortValue !== SortType.length,
+            'is-light': sortValue !== SortType.Length,
           })}
-          onClick={() => setSortValue(SortType.length)}
+          onClick={() => setSortValue(SortType.Length)}
         >
           Sort by length
         </button>
@@ -82,21 +104,18 @@ export const App: React.FC = () => {
         <button
           type="button"
           className={cn('button', 'is-warning', {
-            'is-light': isReversed !== true,
+            'is-light': !isReversed,
           })}
-          onClick={() => setIsReversed(!isReversed)}
+          onClick={() => setIsReversed(prevIsReversed => !prevIsReversed)}
         >
           Reverse
         </button>
 
-        {(sortValue || isReversed) && (
+        {isSortedOrReserved && (
           <button
             type="button"
             className="button is-danger is-light"
-            onClick={() => {
-              setSortValue('');
-              setIsReversed(false);
-            }}
+            onClick={handleReset}
           >
             Reset
           </button>
