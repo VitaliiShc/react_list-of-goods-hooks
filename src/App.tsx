@@ -39,11 +39,11 @@ function createInternalArrayOfObjectsWithId(arr: string[]): Good[] {
 const goodsListWithId = createInternalArrayOfObjectsWithId(goodsFromServer);
 
 function sortingAndReversing(
-  arr: Good[],
+  goodList: Good[],
   sortValue: string,
   isReversed: boolean,
 ): Good[] {
-  let sorted = arr.toSorted((good1, good2) => {
+  let sorted = goodList.toSorted((good1, good2) => {
     switch (sortValue) {
       case SortType.Length:
         return good1.name.length - good2.name.length;
