@@ -38,7 +38,7 @@ function createInternalArrayOfObjectsWithId(arr: string[]): Good[] {
 
 const goodsListWithId = createInternalArrayOfObjectsWithId(goodsFromServer);
 
-function sortingAndReversing(
+function getSortedGoods(
   goodList: Good[],
   sortValue: string,
   isReversed: boolean,
@@ -72,11 +72,7 @@ export const App: React.FC = () => {
     setIsReversed(false);
   };
 
-  const sortedGoods = sortingAndReversing(
-    goodsListWithId,
-    sortValue,
-    isReversed,
-  );
+  const sortedGoods = getSortedGoods(goodsListWithId, sortValue, isReversed);
 
   return (
     <div className="section content">
